@@ -1,92 +1,73 @@
-/*----- functions -----*/
+const currentPlayer = document.querySelector(".currentPlayer");
+const resetBtn = document.querySelector(".reset");
+const message = document.querySelector(".message");
 
-  //Initialize
+let selected;
+let player = "X";
 
-  function init() {
+let positions = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9],
+  [1, 4, 7],
+  [2, 5, 8],
+  [3, 6, 9],
+  [1, 5, 9],
+  [3, 5, 7],
+];
 
-    const message = document.querySelector(".message");
-    const resetBtn = document.querySelector(".reset");
-    const items = document.querySelectorAll(".item");
-    const gridArray = Array.from(items);
-    let tracking = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-    let currentPlayer = "playerX";
+function init() {
+  selected = [];
 
-    //Use forEach to loop through all the board items
-    items.forEach((item) => item.addEventListener('click', (e) => {
-      //Player makes a move
-      const index = gridArray.indexOf(e.target);
-        if ( items[index].classList.contains("playerX") || items[index].classList.contains("Player0")
-        ) {
-          return;
-        }
+  currentPlayer.innerHTML = `PLAYER: ${player}`;
+
+  document.querySelectorAll(".game button").forEach((item) => {
+    item.innerHTML = "";
+    item.addEventListener("click", newMove);
+  });
+}   
 
 
-      items[index].classList.add("playerX");
-      items[index].classList.add("player0");
+init();
 
-      //Slice out the move from tracking list
-      const SpliceNr = tracking.indexOf(index + 1);
-        tracking.splice(SpliceNr, 1);
+function newMove(e) {
+  const index = e.target.getAttribute("data-i");
+  e.target.innerHTML = player;
+  e.target.removeEventListener("click", newMove);
+  selected[index] = player;
 
-        //Check for player win
-        if (winCheck("playerX", items)) {
-          message.innerHTML = "Player X wins!";
+  setTimeout(() => {
+    check();
+  }, [100]);
 
-          document.body.classList.add("over");
-            return;
-        } 
-
-        if  (winCheck("player0", items)) {
-          message.innerHTML = "Player 0 wins!";
-
-          document.body.classList.add("over");
-            return;
-        } 
-
-        //Check if Draw
-        if (tracking.lenght === 0) {
-          message.innerHTML = "It's a DRAW!";
-
-          document.body.classList.add("over");
-          
-          return;
-        }
-    })
-   );
-
-   //RESTART button event
-
-   resetBtn.addEventListener('click', () => {
-    location.reload();
-   });
+  player = player === "X" ? "O" : "X";
+  currentPlayer.innerHTML = `PLAYER: ${player}`;
 }
 
-//Win Check function
-function winCheck(player, items) {
-  function check(pos1, pos2, pos3) {
-    console.log(items);
-    if (
-      items[pos1].classList.contains(player) & 
-    
-      items[pos2].classList.contains(player) &
+resetBtn.addEventListener('click', () => {
+  location.reload();
+ });
 
-      items[pos3].classList.contains(player) 
-    ) {
-      return true;
-    } else {
-      return false;
+function check() {
+  let playerLastMove = player === "X" ? "O" : "X";
+
+  const items = selected
+    .map((item, i) => [item, i])
+    .filter((item) => item[0] === playerLastMove)
+    .map((item) => item[1]);
+
+  for (pos of positions) {
+    if (pos.every((item) => items.includes(item))) {
+      alert("THE PLAYER'" + playerLastMove + "' WON!");
+      init();
+      return;
     }
   }
 
-  if (check(0, 3, 6)) return true;
-  else if (check(1, 4, 7)) return true;
-  else if (check(2, 5, 8)) return true;
-  else if (check(0, 1, 2)) return true;
-  else if (check(3, 4, 5)) return true;
-  else if (check(6, 7, 8)) return true;
-  else if (check(0, 4, 8)) return true;
-  else if (check(2, 4, 6)) return true;
-}
+  if (selected.filter((item) => item).length === 9) {
+    message.innerHTML = "It's a DRAW!";
+    init();
+    return;
+  }
 
-//Initialize the game
-init();
+}
