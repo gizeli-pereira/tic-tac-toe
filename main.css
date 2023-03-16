@@ -32,7 +32,6 @@
     border-radius: 3vmin;
     background-color: rgb(230, 236, 232);
     background-size: contain;
-    /* animation: rotating 0s linear infinite; */
   }
 
   button {
@@ -42,4 +41,17 @@
     color: white;
     border-radius: 1vmin;
     font-size: 4vmin;
+  }
+
+  .playerX {
+    background-image: url(https://i.ibb.co/d6LQqt1/Frame.png);
+    background-repeat: no-repeat;
+    background-size: 50%;
+    background-position: center;
+  }
+  .player0 {
+    background-image: url(https://i.ibb.co/McCm47K/Frame-1.png);
+    background-repeat: no-repeat;
+    background-size: 50%;
+    background-position: center;
   }

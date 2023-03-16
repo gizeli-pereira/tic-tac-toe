@@ -1,115 +1,91 @@
-/*----- app's state (variables) -----*/
-let game;
-
-/*----- cached element references -----*/
-const boardEl = document.getElementById('board');
-const msgEl = document.getElementById('message');
-
-document.querySelector('button').addEventListener('click', initialize);
-
-/*----- classes -----*/
-class Square {
-  constructor(domElement) {
-    this.domElement = domElement;
-    this.value = null;
-  }
-
-  static renderLookup = {
-    '1': 'orange',
-   '-1': 'yellow',
-   'null': 'gray'
-  };
-
-  render() {
-     this.domElement.style.backgroundColor = Square.renderLookup[this.value];
-  }
-}
-
-class TicTacToeGame {
-  // special method used to initialize
-  // properties on the shiny new project
- constructor(boardElement, messageElement) {
-    this.boardElement = boardElement;
-    this.messageElement = messageElement;
-    this.squareEls = [...boardElement.querySelectorAll('div')];
-  // NEW CODE BELOW
-  // Attach a delegated event listener
-  // Arrow function is necessary to ensure 'this'
-  // is set to the game object
-    this.boardElement.addEventListener('click', (evt) => {
-    // Obtain index of square
-      const idx = this.squareEls.indexOf(evt.target);
-    // Guards
-      if (
-      // Didn't click <div> in grid
-        idx === -1 ||
-      // Square already taken
-        this.squares[idx].value ||
-      // Game over
-        this.winner
-    ) return;
-    // Update the square object
-      this.squares[idx].value = this.turn;  
-    // Update other state (turn, winner)
-      this.turn *= -1;
-      this.winner = this.getWinner();
-    // Render updated state
-      this.render();
-  });
-}
-
-
-  static winningCombos = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
-  
-  play() {
-    // all instances/ptototype methods have 'this' keyword set to the actual object (instance)
-    this.turn = 1;
-    this.winner = null;
-    this.squares = this.squareEls.map(el => new Square(el));
-    this.render();
-  }
-
-  getWinner() {
-  // Shortcut variable
-    const combos = TicTacToeGame.winningCombos;
-    for (let i = 0; i < combos.length; i++) {
-      if (Math.abs(this.squares[combos[i][0]].value + this.squares[combos[i][1]].value + this.squares[combos[i][2]].value) === 3)
-        return this.squares[combos[i][0]].value;
-  }
-  // Array.prototype.some iterator method!
-    if (this.squares.some(square => square.value === null)) return null;
-    return 'T';
-}
-  
-  render() {
-  // Square objects are responsible for rendering themselves
-  this.squares.forEach(square => square.render());
-  // NEW CODE BELOW
-  if (this.winner === 'T') {
-    this.messageElement.innerHTML = 'DRAW!';
-  } else if (this.winner) {
-    this.messageElement.innerHTML = `Player ${this.winner === 1 ? 1 : 2} Wins!`;
-  } else {
-    this.messageElement.innerHTML = `Player ${this.turn === 1 ? 1 : 2}'s Turn`;
-  }
-}
-
- 
-}
-
 /*----- functions -----*/
-initialize();
 
-function initialize() {
-  game = new TicTacToeGame(boardEl, msgEl);
-  game.play();
+  //Initialize the init
+
+  function init() {
+
+    const message = document.querySelector(".message");
+    const restartBtn = document.querySelector(".restart");
+    const items = document.querySelectorAll(".item");
+    const gridArray = Array.from(items);
+    let tracking = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let currentPlayer = "playerX";
+
+    //Use forEach to loop through all the board items
+    items.forEach((item) =>
+    item.addEventListener('click', (e) => {
+      //Player makes a move
+      const index = gridArray.indexOf(e.target);
+        if ( items[index].classList.contains("playerX") || items[index].classList.contains("Player0")
+        ) {
+          return;
+        }
+
+      items[index].classList.add("playerX");
+
+      //Hslice out the move from tracking list
+      const SpliceNr = tracking.indexOf(index + 1);
+        tracking.splice(SpliceNr, 1);
+
+        //Check for player win
+        if (winCheck("playerX", items)) {
+          message.innerHTML = "Player X wins!";
+
+          document.body.classList.add("over");
+            return;
+        } 
+
+        if  (winCheck("player0", items)) {
+          message.innerHTML = "Player 0 wins!";
+
+          document.body.classList.add("over");
+            return;
+        } 
+
+        //Check if Draw
+        if (tracking.lenght === 0) {
+          message.innerHTML = "It's a DRAW!";
+
+          document.body.classList.add("over");
+          
+          return;
+        }
+    })
+   );
+
+   //RESTART button event
+
+   restartBtn.addEventListener('click', () => {
+    location.reload();
+   });
 }
+
+//Win Check function
+function winCheck(player, items) {
+  function check(pos1, pos2, pos3) {
+    console.log(items);
+    if (
+      items[pos1].classList.contains(player) & 
+    
+      items[pos2].classList.contains(player) &
+
+      items[pos3].classList.contains(player) 
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  if (check(0, 3, 6)) return true;
+  else if (check(1, 4, 7)) return true;
+  else if (check(2, 5, 8)) return true;
+  else if (check(0, 1, 2)) return true;
+  else if (check(3, 4, 5)) return true;
+  else if (check(6, 7, 8)) return true;
+  else if (check(0, 4, 8)) return true;
+  else if (check(2, 4, 6)) return true;
+}
+
+//Initialize the game
+init();
