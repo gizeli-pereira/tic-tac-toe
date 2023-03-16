@@ -40,10 +40,8 @@ function newMove(e) {
   e.target.removeEventListener("click", newMove);
   selected[index] = player;
 
-  setTimeout(() => {
-    check();
-  }, [100]);
-
+  check();
+  
 //Show who is the current player 
   player = player === "X" ? "O" : "X";
   currentPlayer.innerHTML = `PLAYER: ${player}`;
@@ -78,3 +76,5 @@ function check() {
   }
 
 }
+
+
