@@ -1,19 +1,18 @@
 /*----- functions -----*/
 
-  //Initialize the init
+  //Initialize
 
   function init() {
 
     const message = document.querySelector(".message");
-    const restartBtn = document.querySelector(".restart");
+    const resetBtn = document.querySelector(".reset");
     const items = document.querySelectorAll(".item");
     const gridArray = Array.from(items);
     let tracking = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     let currentPlayer = "playerX";
 
     //Use forEach to loop through all the board items
-    items.forEach((item) =>
-    item.addEventListener('click', (e) => {
+    items.forEach((item) => item.addEventListener('click', (e) => {
       //Player makes a move
       const index = gridArray.indexOf(e.target);
         if ( items[index].classList.contains("playerX") || items[index].classList.contains("Player0")
@@ -21,9 +20,11 @@
           return;
         }
 
-      items[index].classList.add("playerX");
 
-      //Hslice out the move from tracking list
+      items[index].classList.add("playerX");
+      items[index].classList.add("player0");
+
+      //Slice out the move from tracking list
       const SpliceNr = tracking.indexOf(index + 1);
         tracking.splice(SpliceNr, 1);
 
@@ -55,7 +56,7 @@
 
    //RESTART button event
 
-   restartBtn.addEventListener('click', () => {
+   resetBtn.addEventListener('click', () => {
     location.reload();
    });
 }
