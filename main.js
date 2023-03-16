@@ -1,7 +1,9 @@
+/*----- constants -----*/
 const currentPlayer = document.querySelector(".currentPlayer");
 const resetBtn = document.querySelector(".reset");
 const message = document.querySelector(".message");
 
+/*----- state variables -----*/
 let selected;
 let player = "X";
 
@@ -16,6 +18,7 @@ let positions = [
   [3, 5, 7],
 ];
 
+/*----- functions and event listeners -----*/
 function init() {
   selected = [];
 
@@ -30,6 +33,7 @@ function init() {
 
 init();
 
+//Get player move on button
 function newMove(e) {
   const index = e.target.getAttribute("data-i");
   e.target.innerHTML = player;
@@ -40,14 +44,17 @@ function newMove(e) {
     check();
   }, [100]);
 
+//Show who is the current player 
   player = player === "X" ? "O" : "X";
   currentPlayer.innerHTML = `PLAYER: ${player}`;
 }
 
+//Reset button
 resetBtn.addEventListener('click', () => {
   location.reload();
  });
 
+ //Check for winner or DRAW
 function check() {
   let playerLastMove = player === "X" ? "O" : "X";
 
@@ -55,7 +62,7 @@ function check() {
     .map((item, i) => [item, i])
     .filter((item) => item[0] === playerLastMove)
     .map((item) => item[1]);
-
+// for loop to check the positions of the players
   for (pos of positions) {
     if (pos.every((item) => items.includes(item))) {
       alert("THE PLAYER'" + playerLastMove + "' WON!");
